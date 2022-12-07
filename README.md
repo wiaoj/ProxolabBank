@@ -35,7 +35,6 @@ POST http://localhost/api/auth/register
 
 ```json
 {
-    {
     "first_name": "bertan",
     "last_name": "tokgöz",
     "username": "bertan123",
