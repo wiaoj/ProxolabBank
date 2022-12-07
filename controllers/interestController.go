@@ -83,73 +83,31 @@ func DeleteInterest(context *gin.Context) {
 func GetInterestsQuery(context *gin.Context) {
 	var interests []*models.Interest
 	database := *initializers.DB.Model(&interests)
-	var bankId uint
-	var creditTypeId uint
-	var timeOptionId uint
 
-	//bankId, _ := strconv.ParseUint(context.Query("bankId"), 10, 64)
-	// creditTypeId, _ := strconv.ParseUint(context.Query("creditTypeId"), 10, 64)
-	// timeOptionId, _ := strconv.ParseUint(context.Query("timeOptionId"), 10, 64)
 	interestOrderType := context.Query("interestOrderType")
 
 	if interestOrderType == "" {
 		interestOrderType = "asc"
 	}
 
-	// initializers.DB.Find(&interests)
-	// context.JSON(http.StatusNotFound, contracts.MultipleResponse{
-	// 	Items: interests,
-	// })
-	// context.Abort()
-	// return
-	database.Joins("Bank").Joins("TimeOption").Joins("CreditType")
-	if x, err := strconv.ParseUint(context.Query("bankId"), 10, 64); err == nil {
-		bankId = uint(x)
+	database.Preload("Bank").Preload("TimeOption").Preload("CreditType")
+	if bankId, err := strconv.ParseUint(context.Query("bankId"), 10, 64); err == nil {
 		database.Where(&models.Interest{BankID: uint(bankId)})
 	}
 
-	if x, err := strconv.ParseUint(context.Query("timeOptionId"), 10, 64); err == nil {
-		timeOptionId = uint(x)
+	if timeOptionId, err := strconv.ParseUint(context.Query("timeOptionId"), 10, 64); err == nil {
 		database.Where(&models.Interest{TimeOptionID: uint(timeOptionId)}).Find(&interests)
-	}
-
-	if x, err := strconv.ParseUint(context.Query("creditTypeId"), 10, 64); err == nil {
-		creditTypeId = uint(x)
+	} else if creditTypeId, err := strconv.ParseUint(context.Query("creditTypeId"), 10, 64); err == nil {
 		database.Where(&models.Interest{CreditTypeID: uint(creditTypeId)}).Find(&interests)
 	}
 
-	database.
-		Order("interest " + interestOrderType).Find(&interests)
-	//initializers.DB.Order("interest " + interestOrderType)
-
-	// if err := initializers.DB.First(&models.Bank{}, bankId).Error; err != nil {
-	// 	context.JSON(http.StatusNotFound, contracts.MultipleResponse{
-	// 		Message: "herhangi bir banka bulunamadı",
-	// 		Items:   []any{},
-	// 	})
-	// 	context.Abort()
-	// 	return
-	// }
+	database.Order("interest " + interestOrderType).Find(&interests)
 
 	// initializers.DB.
 	// 	Joins("JOIN banks ON banks.id = ?", uint(bankId)).
 	// 	Joins("JOIN time_options ON time_options.id = ?", uint(timeOptionId)).
 	// 	Joins("JOIN credit_types ON credit_types.id = ?", uint(creditTypeId)).
 	// 	Order("interest " + interestOrderType).Find(&interests)
-
-	// initializers.DB.
-
-	// 	Joins("TimeOption").Where(&models.Interest{TimeOptionID: uint(timeOptionId)}).
-	// 	Joins("CreditType").Where(&models.Interest{CreditTypeID: uint(creditTypeId)}).
-
-	if interests[0].ID == 0 || &interests == nil {
-		context.JSON(http.StatusNotFound, contracts.MultipleResponse{
-			Message: "herhangi bir faiz bulunamadı",
-			Items:   []any{},
-		})
-		context.Abort()
-		return
-	}
 
 	var interestsResponse []contracts.InterestResponse
 
