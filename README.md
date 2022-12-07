@@ -18,8 +18,8 @@
 // login olmak için
 // http://localhost/api/auth/login   (POST method)
 {
-    "username": , // string
-    "password":   // string
+    "username": "proxolab", // string
+    "password": "proxolab" // string
 }
 
 //yeni kullanıcı kayıt etmek için (proxolab kullanıcısı sadece bu yetkiye sahip)
