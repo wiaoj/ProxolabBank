@@ -83,7 +83,7 @@
 
 
 ```js
-GET http://localhost:3000/api/interests/q?creditTypeId=1&timeOptionId=7&interestOrderType=asc
+GET http://localhost:3000/api/interests/q?bankId=2&creditTypeId=1&timeOptionId=7&interestOrderType=asc
 ```
 
 ```json
@@ -91,7 +91,7 @@ GET http://localhost:3000/api/interests/q?creditTypeId=1&timeOptionId=7&interest
     "message": "faizler asc şeklinde sıralanıp getirildi",
     "items": [
         {
-            "bank_id": 3,
+            "bank_id": 2,
             "bank_name": "test name3",
             "interest": 0.1,
             "time_option_id": 7,
@@ -100,7 +100,7 @@ GET http://localhost:3000/api/interests/q?creditTypeId=1&timeOptionId=7&interest
             "credit_type_description": "Konut Kredisi"
         },
         {
-            "bank_id": 3,
+            "bank_id": 2,
             "bank_name": "test name3",
             "interest": 1.1,
             "time_option_id": 7,
