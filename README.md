@@ -16,18 +16,35 @@
 // Hazır verdiğimiz kullanıcı adı ve şifre ile de işlem yapabilirsiniz yada o kullanıcı ile login olduktan sonra başka kullanıcı register edebilirsiniz
 
 // login olmak için
-// http://localhost/api/auth/login   (POST method)
+
+```js
+POST http://localhost/api/auth/login
+```
+```json
 {
-    "username": "proxolab", // string
-    "password": "proxolab" // string
+    "username": "proxolab", 
+    "password": "proxolab"
 }
+```
 
 //yeni kullanıcı kayıt etmek için (proxolab kullanıcısı sadece bu yetkiye sahip)
-// http://localhost/api/auth/register  (POST method)
+
+```js
+POST http://localhost/api/auth/register
+```
+
+```json
 {
-    "username": , // string
-    "password":   // string
+    {
+    "first_name": "bertan",
+    "last_name": "tokgöz",
+    "username": "bertan123",
+    "age": 19,
+    "email": "bertan@gmail.com",
+    "phone_number": "000-000-00-00",
+    "password": "password"
 }
+```
 
 // ------------------------------
 
