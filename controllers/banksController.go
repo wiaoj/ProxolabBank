@@ -50,8 +50,9 @@ func GetAllBanks(context *gin.Context) {
 
 func GetByIdBank(context *gin.Context) {
 	var bank models.Bank
+	id := context.Param("id")
 
-	initializers.DB.Model(&models.Bank{}).Preload("Interests").Find(&bank, context.Param("id"))
+	initializers.DB.Model(&models.Bank{}).Preload("Interests").Find(&bank, id)
 
 	if bank.ID == 0 {
 		context.JSON(http.StatusNotFound, gin.H{
@@ -60,15 +61,28 @@ func GetByIdBank(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{
-		"bank": bank,
+	var bankResponse contracts.BankResponse
+
+	bankResponse.Name = bank.Name
+
+	for index := 0; index < len(bank.Interests); index++ {
+		bankResponse.Interests = append(bankResponse.Interests, contracts.BankInterestsResponse{
+			Interest:     bank.Interests[index].Interest,
+			CreditTypeID: bank.Interests[index].CreditTypeID,
+			TimeOptionID: bank.Interests[index].TimeOptionID,
+		})
+	}
+
+	context.JSON(http.StatusOK, contracts.SingleResponse{
+		Message: id + "'ye ait banka detayları getirildi",
+		Item:    bankResponse,
 	})
 }
 
 func DeleteBank(context *gin.Context) {
 	var bank models.Bank
 
-	initializers.DB.Delete(&bank, context.Param("id"))
+	initializers.DB.Unscoped().Delete(&bank, context.Param("id"))
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "silme işlemi başarılı",

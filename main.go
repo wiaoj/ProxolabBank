@@ -33,7 +33,7 @@ func initRouter() *gin.Engine {
 		bank := api.Group("/banks")
 		{
 			bank.POST("/", middlewares.AdminAuthorization(), controllers.CreateBank)
-			bank.DELETE("/", middlewares.AdminAuthorization(), controllers.DeleteBank)
+			bank.DELETE("/:id", middlewares.AdminAuthorization(), controllers.DeleteBank)
 
 			bank.GET("/", controllers.GetAllBanks)
 			bank.GET("/:id", controllers.GetByIdBank)
@@ -45,6 +45,7 @@ func initRouter() *gin.Engine {
 			interest.DELETE("/:id", middlewares.AdminAuthorization(), controllers.DeleteInterest)
 
 			interest.GET("/", controllers.GetAllInterest)
+			interest.GET("/q", controllers.GetInterestsQuery)
 		}
 	}
 	return router

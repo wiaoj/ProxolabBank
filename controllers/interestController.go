@@ -5,6 +5,7 @@ import (
 	"bank-application/initializers"
 	"bank-application/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -72,13 +73,58 @@ func CreateInterest(context *gin.Context) {
 func DeleteInterest(context *gin.Context) {
 	var interest models.Interest
 
-	initializers.DB.Delete(&interest, context.Param("id"))
+	initializers.DB.Unscoped().Delete(&interest, context.Param("id"))
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "faiz kaldırıldı",
 	})
 }
+func GetInterestsQuery(context *gin.Context) {
+	var interests []models.Interest
+	bankId, _ := strconv.ParseUint(context.Query("bankId"), 10, 64)
 
+	creditTypeId, _ := strconv.ParseUint(context.Query("creditTypeId"), 10, 64)
+	timeOptionId, _ := strconv.ParseUint(context.Query("timeOptionId"), 10, 64)
+	interestOrderType := context.Query("interestOrderType")
+
+	if interestOrderType == "" {
+		interestOrderType = "asc"
+	}
+
+	initializers.DB.
+		Joins("Bank").Where(&models.Interest{BankID: uint(bankId)}).
+		Joins("TimeOption").Where(&models.Interest{TimeOptionID: uint(timeOptionId)}).
+		Joins("CreditType").Where(&models.Interest{CreditTypeID: uint(creditTypeId)}).
+		Order("interest " + interestOrderType).Find(&interests)
+
+	if interests[0].ID == 0 || &interests == nil {
+		context.JSON(http.StatusNotFound, contracts.MultipleResponse{
+			Message: "herhangi bir faiz bulunamadı",
+			Items:   []any{},
+		})
+		context.Abort()
+		return
+	}
+
+	var interestsResponse []contracts.InterestResponse
+
+	for index := 0; index < len(interests); index++ {
+		interestsResponse = append(interestsResponse, contracts.InterestResponse{
+			BankID:                interests[index].BankID,
+			BankName:              interests[index].Bank.Name,
+			Interest:              interests[index].Interest,
+			CreditTypeID:          interests[index].CreditTypeID,
+			CreditTypeDescription: interests[index].CreditType.Description,
+			TimeOptionID:          interests[index].TimeOptionID,
+			TimeOptionDescription: interests[index].TimeOption.Description,
+		})
+	}
+
+	context.JSON(http.StatusOK, contracts.MultipleResponse{
+		Message: "faizler " + interestOrderType + " şeklinde sıralanıp getirildi",
+		Items:   interestsResponse,
+	})
+}
 func GetAllInterest(context *gin.Context) {
 	var interests []models.Interest
 
