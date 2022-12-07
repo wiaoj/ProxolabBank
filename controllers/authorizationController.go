@@ -59,17 +59,16 @@ func Register(context *gin.Context) {
 		return
 	}
 
-	token, jwtError := utils.GenerateJWT(user)
+	// token, jwtError := utils.GenerateJWT(user)
 
-	if jwtError != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": jwtError.Error()})
-		context.Abort()
-		return
-	}
+	// if jwtError != nil {
+	// 	context.JSON(http.StatusBadRequest, gin.H{"error": jwtError.Error()})
+	// 	context.Abort()
+	// 	return
+	// }
 
-	context.JSON(http.StatusOK, gin.H{
-		"token": token,
-		"user":  user,
+	context.JSON(http.StatusCreated, gin.H{
+		"user": user,
 	})
 }
 

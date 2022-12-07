@@ -33,7 +33,7 @@ func CreateBank(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{
+	context.JSON(http.StatusCreated, gin.H{
 		"bank": bank,
 	})
 }
@@ -74,7 +74,7 @@ func GetByIdBank(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, contracts.SingleResponse{
-		Message: id + "'ye ait banka detayları getirildi",
+		Message: id + " numaralı id'ye ait banka detayları getirildi",
 		Item:    bankResponse,
 	})
 }

@@ -8,6 +8,7 @@ type CreateInterestRequest struct {
 }
 
 type InterestResponse struct {
+	Id                    uint    `json:"id"`
 	BankID                uint    `json:"bank_id"`
 	BankName              string  `json:"bank_name"`
 	Interest              float32 `json:"interest"`
