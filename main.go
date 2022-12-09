@@ -4,6 +4,7 @@ import (
 	"bank-application/controllers"
 	"bank-application/initializers"
 	"bank-application/middlewares"
+	"bank-application/migration"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,10 +12,10 @@ import (
 func init() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDB()
+	migration.Migration()
 }
 
 func main() {
-
 	router := initRouter()
 	router.Run()
 }

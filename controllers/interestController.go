@@ -13,7 +13,6 @@ import (
 func CreateInterest(context *gin.Context) {
 	var request contracts.CreateInterestRequest
 
-	//418
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusTeapot, contracts.SingleResponse{
 			Message: "geçersiz input tekrar deneyiniz",
@@ -109,6 +108,12 @@ func GetInterestsQuery(context *gin.Context) {
 	// 	Joins("JOIN credit_types ON credit_types.id = ?", uint(creditTypeId)).
 	// 	Order("interest " + interestOrderType).Find(&interests)
 
+	if len(interests) == 0 {
+		context.JSON(http.StatusNotFound, gin.H{"message": "aranılan türde faiz bulunamadı"})
+		context.Abort()
+		return
+	}
+
 	var interestsResponse []contracts.InterestResponse
 
 	for index := 0; index < len(interests); index++ {
@@ -134,7 +139,7 @@ func GetAllInterest(context *gin.Context) {
 
 	initializers.DB.Preload("Bank").Preload("TimeOption").Preload("CreditType").Order("interest asc").Find(&interests)
 
-	if interests[0].ID == 0 {
+	if len(interests) == 0 {
 		context.JSON(http.StatusNotFound, contracts.MultipleResponse{
 			Message: "herhangi bir faiz bulunamadı",
 			Items:   []any{},
