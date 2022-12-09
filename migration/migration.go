@@ -20,11 +20,13 @@ func main() {
 
 }
 
-func Migration() {
+func Migration() string {
 	if tables, _ := initializers.DB.Migrator().GetTables(); len(tables) == 0 {
 		//x := initializers.DB.Migrator().HasTable("users")
-		Migrate()
+		migrate()
+		return "veritabanı oluşturuldu"
 	}
+	return "veritabanı mevcut"
 }
 
 const databaseName = "public"
@@ -174,7 +176,14 @@ CREATE TABLE credit_type_time_options (
 ALTER TABLE public.credit_type_time_options ADD CONSTRAINT fk_credit_type_time_options_credit_type FOREIGN KEY (credit_type_id) REFERENCES credit_types(id);
 ALTER TABLE public.credit_type_time_options ADD CONSTRAINT fk_credit_type_time_options_time_option FOREIGN KEY (time_option_id) REFERENCES time_options(id);`
 
-func Migrate() {
+func DeleteDatabase() string {
+	if err := database.Exec(dropSchema).Error; err != nil {
+		panic(err)
+	}
+	return "veritabanı kaldırıldı"
+}
+
+func migrate() {
 	if err := database.Exec(dropSchema).Error; err != nil {
 		panic(err)
 	}

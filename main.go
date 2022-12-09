@@ -48,6 +48,12 @@ func initRouter() *gin.Engine {
 			interest.GET("/", controllers.GetAllInterest)
 			interest.GET("/q", controllers.GetInterestsQuery)
 		}
+
+		admin := api.Group("/admin")
+		{
+			admin.POST("/migrate", middlewares.AdminAuthorization(), controllers.CreateMigration)
+			admin.POST("/deletedatabase", middlewares.AdminAuthorization(), controllers.DeleteDatabase)
+		}
 	}
 	return router
 }
